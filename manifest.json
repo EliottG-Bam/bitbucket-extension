@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "Bitbucket booster",
+  "version": "1.0",
+  "description": "Boost your Bitbucket experience",
+  "permissions": ["activeTab", "webNavigation"],
+  "content_scripts": [
+    {
+      "matches": ["https://bitbucket.org/*"],
+      "js": ["add-commits-nav.js"],
+      "css": ["styles.css"]
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+#bitbucket-booster-nav-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 0;
+}
+
+.bitbucket-booster-nav-link {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white !important;
+  text-decoration: none;
+  border-radius: 4px;
+  font-family: Arial, sans-serif;
+  transition: background-color 0.3s;
+  text-decoration: none !important;
+}
+
+.bitbucket-booster-nav-link:hover {
+  background-color: #0056b3;
+}
+
+.bitbucket-booster-nav-link.disabled {
+  background-color: #6a737d;
+  cursor: not-allowed;
+}
