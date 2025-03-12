@@ -1,0 +1,16 @@
+#bitbucket-booster-nav-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.bitbucket-booster-nav-link {
+  padding: 10px;
+}
+
+.bitbucket-booster-nav-link.disabled {
+  text-decoration: none !important;
+  color: #6a737d !important;
+  cursor: not-allowed;
+}
