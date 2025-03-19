@@ -22,12 +22,24 @@ async function updateNavBar() {
 }
 
 async function createNavBar() {
-  const adjacentCommits = await getAdjacentCommits();
-  if (!adjacentCommits) return;
+  const prId = await getCurrentPRId();
+  const adjacentCommits = await getAdjacentCommits(prId);
 
   const navContainer = document.createElement("div");
   navContainer.id = NAV_CONTAINER_ID;
 
+  // add a home button
+  const homeLink = document.createElement("a");
+  homeLink.textContent = "Home";
+  const pullRequestHomeUrl = window.location.href.replace(
+    /\/commits\/[a-fA-F0-9]+/,
+    `/pull-requests/${prId}`
+  );
+  homeLink.setAttribute("href", pullRequestHomeUrl);
+
+  navContainer.appendChild(homeLink);
+
+  if (!adjacentCommits) return;
   const prevLink = document.createElement("a");
   prevLink.textContent = "Previous";
   prevLink.className = "bitbucket-booster-nav-link";
@@ -143,8 +155,7 @@ async function getCurrentPRId() {
 }
 
 // Step 3
-async function getAdjacentCommits() {
-  const prId = await getCurrentPRId();
+async function getAdjacentCommits(prId) {
   if (!prId) return null;
   // https://bitbucket.org/!api/2.0/repositories/galerieslafayette/detaxe-mobile/pullrequests/270/commits
   // fetch commits the commits
