@@ -65,9 +65,10 @@ async function createNavBar() {
 
 // Keyboard navigation: Press "n" for next commit and "p" for previous commit.
 document.addEventListener("keydown", (event) => {
-  // Avoid interfering when typing in input fields or textareas
-  const tag = event.target.tagName.toLowerCase();
-  if (tag === "input" || tag === "textarea") return;
+  // Avoid interfering when typing in input fields, textareas, selects, or contentEditable elements
+  const target = event.target;
+  if (target.matches("input, textarea, select") || target.isContentEditable)
+    return;
 
   if (event.key.toLowerCase() === "n") {
     const nextLink = document.querySelector(
@@ -159,10 +160,12 @@ async function getAdjacentCommits() {
   for (let i = 0; i < commitsHistory.length; i++) {
     if (commitsHistory[i].hash === currentCommitNumber) {
       if (i > 0) {
-        previousCommit = commitsHistory[i - 1].hash;
+        // "Next" commit is the newer commit at index i - 1
+        nextCommit = commitsHistory[i - 1].hash;
       }
       if (i < commitsHistory.length - 1) {
-        nextCommit = commitsHistory[i + 1].hash;
+        // "Previous" commit is the older commit at index i + 1
+        previousCommit = commitsHistory[i + 1].hash;
       }
       break;
     }
