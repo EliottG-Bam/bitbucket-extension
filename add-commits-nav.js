@@ -147,7 +147,7 @@ async function getAdjacentCommits() {
   if (!prId) return null;
   // https://bitbucket.org/!api/2.0/repositories/galerieslafayette/detaxe-mobile/pullrequests/270/commits
   // fetch commits the commits
-  const commitsUrl = `https://bitbucket.org/!api/2.0/repositories/galerieslafayette/detaxe-mobile/pullrequests/${prId}/commits`;
+  const commitsUrl = `https://bitbucket.org/!api/2.0/repositories/galerieslafayette/detaxe-mobile/pullrequests/${prId}/commits?pagelen=100`;
   const commitsResponse = await fetch(commitsUrl);
   const commitsData = await commitsResponse.json();
   const commitsHistory = commitsData.values;
