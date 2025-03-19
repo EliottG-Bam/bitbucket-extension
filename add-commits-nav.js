@@ -63,6 +63,29 @@ async function createNavBar() {
   mainDiv.prepend(navContainer);
 }
 
+// Keyboard navigation: Press "n" for next commit and "p" for previous commit.
+document.addEventListener("keydown", (event) => {
+  // Avoid interfering when typing in input fields or textareas
+  const tag = event.target.tagName.toLowerCase();
+  if (tag === "input" || tag === "textarea") return;
+
+  if (event.key.toLowerCase() === "n") {
+    const nextLink = document.querySelector(
+      "#bitbucket-booster-nav-container .bitbucket-booster-nav-link:nth-child(2)"
+    );
+    if (nextLink && !nextLink.classList.contains("disabled")) {
+      window.location.href = nextLink.href;
+    }
+  } else if (event.key.toLowerCase() === "p") {
+    const prevLink = document.querySelector(
+      "#bitbucket-booster-nav-container .bitbucket-booster-nav-link:nth-child(1)"
+    );
+    if (prevLink && !prevLink.classList.contains("disabled")) {
+      window.location.href = prevLink.href;
+    }
+  }
+});
+
 // Step 1
 function getCommitNumber() {
   // Support both "/commits/<commit>" and "/commit/<commit>"
@@ -119,7 +142,6 @@ async function getCurrentPRId() {
 }
 
 // Step 3
-
 async function getAdjacentCommits() {
   const prId = await getCurrentPRId();
   if (!prId) return null;
