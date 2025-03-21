@@ -1,3 +1,5 @@
+const projectURL = "/globalFolder/projectName";
+
 // Step 1
 function getCommitNumber() {
   // Support both "/commits/<commit>" and "/commit/<commit>"
@@ -18,7 +20,7 @@ async function getCurrentPRId() {
 
   try {
     // 1. Get annotated references for the commit
-    const annotatedRefsUrl = `https://bitbucket.org/!api/internal/repositories/galerieslafayette/detaxe-mobile/changeset/${commitNumber}/annotated_refs`;
+    const annotatedRefsUrl = `https://bitbucket.org/!api/internal/repositories/${projectURL}/changeset/${commitNumber}/annotated_refs`;
     const annotatedRefsResponse = await fetch(annotatedRefsUrl);
     const annotatedRefs = await annotatedRefsResponse.json();
 
@@ -34,7 +36,7 @@ async function getCurrentPRId() {
     // 3. Build the query URL for fetching the pull request.
     const query = `source.branch.name="${branchName}" AND source.repository.full_name="galerieslafayette/detaxe-mobile" AND destination.repository.full_name="galerieslafayette/detaxe-mobile" AND destination.branch.name="master"`;
     const encodedQuery = encodeURIComponent(query);
-    const prUrl = `https://bitbucket.org/!api/2.0/repositories/galerieslafayette/detaxe-mobile/pullrequests/?fields=next,values.links,values.title,values.id,values.state,values.created_on,values.closed_on&q=${encodedQuery}`;
+    const prUrl = `https://bitbucket.org/!api/2.0/repositories/${projectURL}/pullrequests/?fields=next,values.links,values.title,values.id,values.state,values.created_on,values.closed_on&q=${encodedQuery}`;
 
     // 4. Fetch the pull request data and extract the PR id.
     const prResponse = await fetch(prUrl);
@@ -89,7 +91,7 @@ window.fetch = async function (input, init = {}) {
 
   // Regex to match the commit comments endpoint
   const commitCommentsRegex =
-    /^https:\/\/bitbucket\.org\/!api\/2\.0\/repositories\/galerieslafayette\/detaxe-mobile\/commit\/([^/]+)\/comments\/$/;
+    /^https:\/\/bitbucket\.org\/!api\/2\.0\/repositories\/${projectURL}\/commit\/([^/]+)\/comments\/$/;
 
   if (method.toUpperCase() === "POST" && commitCommentsRegex.test(url)) {
     console.log("MATCHED COMMIT COMMENT POST");
@@ -105,7 +107,7 @@ window.fetch = async function (input, init = {}) {
     }
 
     // Build the new URL using the PR id.
-    const newUrl = `https://bitbucket.org/!api/2.0/repositories/galerieslafayette/detaxe-mobile/pullrequests/${prId}/comments/`;
+    const newUrl = `https://bitbucket.org/!api/2.0/repositories/${projectURL}/pullrequests/${prId}/comments/`;
     console.log(
       `Intercepted POST to commit ${commitID} comments. Redirecting to PR ${prId} comments endpoint: ${newUrl}`
     );

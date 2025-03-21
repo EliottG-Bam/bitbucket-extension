@@ -1,3 +1,5 @@
+const projectURL = "/globalFolder/projectName";
+
 const NAV_CONTAINER_ID = "bitbucket-booster-nav-container";
 const BITBUCKET_COMMIT_URL_REGEX =
   /^https:\/\/bitbucket\.org\/[^\/]+\/[^\/]+\/commits\/([a-fA-F0-9]+)$/;
@@ -119,7 +121,7 @@ async function getCurrentPRId() {
 
   try {
     // 1. Get annotated references for the commit
-    const annotatedRefsUrl = `https://bitbucket.org/!api/internal/repositories/galerieslafayette/detaxe-mobile/changeset/${commitNumber}/annotated_refs`;
+    const annotatedRefsUrl = `https://bitbucket.org/!api/internal/repositories/${projectURL}/changeset/${commitNumber}/annotated_refs`;
     const annotatedRefsResponse = await fetch(annotatedRefsUrl);
     const annotatedRefs = await annotatedRefsResponse.json();
 
@@ -135,7 +137,7 @@ async function getCurrentPRId() {
     // 3. Build the query URL for fetching the pull request.
     const query = `source.branch.name="${branchName}" AND source.repository.full_name="galerieslafayette/detaxe-mobile" AND destination.repository.full_name="galerieslafayette/detaxe-mobile" AND destination.branch.name="master"`;
     const encodedQuery = encodeURIComponent(query);
-    const prUrl = `https://bitbucket.org/!api/2.0/repositories/galerieslafayette/detaxe-mobile/pullrequests/?fields=next,values.links,values.title,values.id,values.state,values.created_on,values.closed_on&q=${encodedQuery}`;
+    const prUrl = `https://bitbucket.org/!api/2.0/repositories/${projectURL}/pullrequests/?fields=next,values.links,values.title,values.id,values.state,values.created_on,values.closed_on&q=${encodedQuery}`;
 
     // 4. Fetch the pull request data and extract the PR id.
     const prResponse = await fetch(prUrl);
@@ -159,7 +161,7 @@ async function getAdjacentCommits(prId) {
   if (!prId) return null;
   // https://bitbucket.org/!api/2.0/repositories/galerieslafayette/detaxe-mobile/pullrequests/270/commits
   // fetch commits the commits
-  const commitsUrl = `https://bitbucket.org/!api/2.0/repositories/galerieslafayette/detaxe-mobile/pullrequests/${prId}/commits?pagelen=100`;
+  const commitsUrl = `https://bitbucket.org/!api/2.0/repositories/${projectURL}/pullrequests/${prId}/commits?pagelen=100`;
   const commitsResponse = await fetch(commitsUrl);
   const commitsData = await commitsResponse.json();
   const commitsHistory = commitsData.values;
