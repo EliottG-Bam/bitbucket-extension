@@ -41,6 +41,8 @@ To enable this functionality, follow these simple steps:
 
 - **Add the project URL**
   - Add the project URL to the `projectURL` constant at the top of the file
+  - ![image](https://github.com/user-attachments/assets/0d598452-44ff-4fc3-b742-38fde4f293ee)
+
 
 ---
 
