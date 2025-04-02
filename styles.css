@@ -1,28 +1,78 @@
+/* Narrow glassy sidebar on the right */
 #bitbucket-booster-nav-container {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  padding: 10px 0;
+    position: fixed;
+    right: 20px;
+    top: 60%;
+    transform: translateY(-50%);
+    /* Make the sidebar only ~80px wide */
+    width: 60px;
+    /* Glassmorphism: dark translucent background + blur */
+    background: rgba(20, 20, 20, 0.4);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+
+    border-radius: 12px;
+    padding: 10px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 1000;
+    gap: 10px;
 }
 
+/* Home link at the top */
+.home-link {
+    color: #fff !important;
+    font-size: 16px;
+    font-family: Arial, sans-serif;
+    font-weight: 500;
+    text-decoration: underline;
+    border-radius: 6px;
+    text-align: center;
+}
+
+.home-link:hover {
+    color: white;
+}
+
+.home-link:visited {
+    color: white;
+}
+
+/* Arrow buttons (previous/next) */
 .bitbucket-booster-nav-link {
-  display: inline-block;
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: white !important;
-  text-decoration: none;
-  border-radius: 4px;
-  font-family: Arial, sans-serif;
-  transition: background-color 0.3s;
-  text-decoration: none !important;
+    width: 100%;
+    aspect-ratio: 1;
+    background: #ffffff;
+    color: #000;
+    border: none;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none !important;
+    font-size: 16px;
+    /* arrow size */
+    cursor: pointer;
+    transition:
+        background 0.2s,
+        transform 0.2s;
+    padding: 0px;
 }
 
 .bitbucket-booster-nav-link:hover {
-  background-color: #0056b3;
+    transform: scale(1.05);
 }
 
+/* Disabled state (no click) */
 .bitbucket-booster-nav-link.disabled {
-  background-color: #6a737d;
-  cursor: not-allowed;
+    background: grey;
+    cursor: not-allowed;
+}
+
+/* Commit index in between the arrow buttons */
+#commitIndex {
+    color: white;
+    font-family: Arial, sans-serif;
+    font-size: 18px;
 }
