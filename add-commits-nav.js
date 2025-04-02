@@ -234,17 +234,15 @@ document.addEventListener("keydown", (event) => {
   if (target.matches("input, textarea, select") || target.isContentEditable)
     return;
 
+  const navLinks = document.querySelectorAll(".bitbucket-booster-nav-link");
+
   if (event.key.toLowerCase() === "n") {
-    const nextLink = document.querySelector(
-      "#bitbucket-booster-nav-container .bitbucket-booster-nav-link:nth-child(2)"
-    );
+    const nextLink = navLinks[1];
     if (nextLink && !nextLink.classList.contains("disabled")) {
       window.location.href = nextLink.href;
     }
   } else if (event.key.toLowerCase() === "p") {
-    const prevLink = document.querySelector(
-      "#bitbucket-booster-nav-container .bitbucket-booster-nav-link:nth-child(1)"
-    );
+    const prevLink = navLinks[0];
     if (prevLink && !prevLink.classList.contains("disabled")) {
       window.location.href = prevLink.href;
     }
