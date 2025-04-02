@@ -147,6 +147,7 @@ async function createNavBar() {
   // add a home button
   const homeLink = document.createElement("a");
   homeLink.textContent = "Home";
+  homeLink.className = "home-link";
   const pullRequestHomeUrl = window.location.href.replace(
     /\/commits\/[a-fA-F0-9]+/,
     `/pull-requests/${prId}`
@@ -159,6 +160,7 @@ async function createNavBar() {
   const commitIndex = commitInfo.currentCommitIndex;
   const commitsLength = commitInfo.commitsLength;
   const commitIndexText = document.createElement("span");
+  commitIndexText.id = "commitIndex";
   commitIndexText.textContent = `${
     commitsLength - commitIndex
   } / ${commitsLength}`;
@@ -167,7 +169,7 @@ async function createNavBar() {
 
   if (!commitInfo) return;
   const prevLink = document.createElement("a");
-  prevLink.textContent = "Previous";
+  prevLink.textContent = "< Prev";
   prevLink.className = "bitbucket-booster-nav-link";
   if (commitInfo.previousCommit) {
     // replace the commit hash in the URL to get the href
@@ -181,7 +183,7 @@ async function createNavBar() {
   }
 
   const nextLink = document.createElement("a");
-  nextLink.textContent = "Next";
+  nextLink.textContent = "Next >";
   nextLink.className = "bitbucket-booster-nav-link";
   if (commitInfo.nextCommit) {
     // replace the commit hash in the URL to get the href
