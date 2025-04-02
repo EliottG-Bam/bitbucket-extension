@@ -26,23 +26,13 @@ To enable this functionality, follow these simple steps:
 
 ---
 
-## 🧩 Add the Scripts and Styles
+## 🧩 Add the Script and Styles
 
 - **Rule 1**  
   Add the contents of the following files:
 
   - `styles.css` → _CSS tab_
   - `add-commits-nav.js` → _JavaScript tab_
-
-- **Rule 2**  
-  Add the content of:
-
-  - `add-commit-msg-to-url.js` → _JavaScript tab only_
-
-- **Add the project URL**
-  - Add the project URL to the `projectURL` constant at the top of the file
-  - ![image](https://github.com/user-attachments/assets/0d598452-44ff-4fc3-b742-38fde4f293ee)
-
 
 ---
 
