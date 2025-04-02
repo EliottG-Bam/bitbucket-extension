@@ -73,7 +73,7 @@ async function getCachedPRId() {
   return cachedPRId;
 }
 
-async function getAdjacentCommits(prId) {
+async function getCommitInfos(prId) {
   if (!prId) return null;
   // https://bitbucket.org/!api/2.0/repositories/galerieslafayette/detaxe-mobile/pullrequests/270/commits
   // fetch commits the commits
@@ -82,12 +82,16 @@ async function getAdjacentCommits(prId) {
   const commitsData = await commitsResponse.json();
   const commitsHistory = commitsData.values;
 
+  const commitsLength = commitsHistory.length;
+
   const currentCommitNumber = getCommitNumber();
 
   let previousCommit = null;
   let nextCommit = null;
+  let currentCommitIndex = 0;
   for (let i = 0; i < commitsHistory.length; i++) {
     if (commitsHistory[i].hash === currentCommitNumber) {
+      currentCommitIndex = i;
       if (i > 0) {
         // "Next" commit is the newer commit at index i - 1
         nextCommit = commitsHistory[i - 1].hash;
@@ -103,6 +107,8 @@ async function getAdjacentCommits(prId) {
   return {
     previousCommit,
     nextCommit,
+    currentCommitIndex,
+    commitsLength,
   };
 }
 
@@ -133,7 +139,7 @@ async function updateNavBar() {
 
 async function createNavBar() {
   const prId = await getCachedPRId();
-  const adjacentCommits = await getAdjacentCommits(prId);
+  const commitInfo = await getCommitInfos(prId);
 
   const navContainer = document.createElement("div");
   navContainer.id = NAV_CONTAINER_ID;
@@ -149,15 +155,25 @@ async function createNavBar() {
 
   navContainer.appendChild(homeLink);
 
-  if (!adjacentCommits) return;
+  // add pagination index
+  const commitIndex = commitInfo.currentCommitIndex;
+  const commitsLength = commitInfo.commitsLength;
+  const commitIndexText = document.createElement("span");
+  commitIndexText.textContent = `${
+    commitsLength - commitIndex
+  } / ${commitsLength}`;
+
+  navContainer.appendChild(commitIndexText);
+
+  if (!commitInfo) return;
   const prevLink = document.createElement("a");
   prevLink.textContent = "Previous";
   prevLink.className = "bitbucket-booster-nav-link";
-  if (adjacentCommits.previousCommit) {
+  if (commitInfo.previousCommit) {
     // replace the commit hash in the URL to get the href
     const prevCommitUrl = window.location.href.replace(
       /\/commits\/[a-fA-F0-9]+/,
-      `/commits/${adjacentCommits.previousCommit}`
+      `/commits/${commitInfo.previousCommit}`
     );
     prevLink.href = prevCommitUrl;
   } else {
@@ -167,11 +183,11 @@ async function createNavBar() {
   const nextLink = document.createElement("a");
   nextLink.textContent = "Next";
   nextLink.className = "bitbucket-booster-nav-link";
-  if (adjacentCommits.nextCommit) {
+  if (commitInfo.nextCommit) {
     // replace the commit hash in the URL to get the href
     const nextCommitUrl = window.location.href.replace(
       /\/commits\/[a-fA-F0-9]+/,
-      `/commits/${adjacentCommits.nextCommit}`
+      `/commits/${commitInfo.nextCommit}`
     );
     nextLink.href = nextCommitUrl;
   } else {
