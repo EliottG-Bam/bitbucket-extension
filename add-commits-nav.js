@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 function getProjectURL() {
   const match = window.location.pathname.match(/^\/([^/]+\/[^/]+)/);
   return match ? match[1] : null;
@@ -119,7 +117,6 @@ async function getCommitInfos(prId) {
 // Commit by commit navigation
 //
 // ------------------------------
->>>>>>> d43050e (:sparkles: feat(merging): merge all)
 const NAV_CONTAINER_ID = "bitbucket-booster-nav-container";
 
 navigation.addEventListener("navigate", () => {
@@ -141,23 +138,12 @@ async function updateNavBar() {
 }
 
 async function createNavBar() {
-<<<<<<< HEAD
-  const adjacentCommits = await getAdjacentCommits();
-  if (!adjacentCommits) return;
-=======
   const prId = await getCachedPRId();
-<<<<<<< HEAD
-  const adjacentCommits = await getAdjacentCommits(prId);
->>>>>>> d43050e (:sparkles: feat(merging): merge all)
-=======
   const commitInfo = await getCommitInfos(prId);
->>>>>>> 7215431 (feat: display commit index)
 
   const navContainer = document.createElement("div");
   navContainer.id = NAV_CONTAINER_ID;
 
-<<<<<<< HEAD
-=======
   // add a home button
   const homeLink = document.createElement("a");
   homeLink.textContent = "Home";
@@ -182,7 +168,6 @@ async function createNavBar() {
   navContainer.appendChild(commitIndexText);
 
   if (!commitInfo) return;
->>>>>>> 7215431 (feat: display commit index)
   const prevLink = document.createElement("a");
   prevLink.textContent = "< Prev";
   prevLink.className = "bitbucket-booster-nav-link";
@@ -218,17 +203,6 @@ async function createNavBar() {
   mainDiv.prepend(navContainer);
 }
 
-<<<<<<< HEAD
-// Step 1
-function getCommitNumber() {
-  // Support both "/commits/<commit>" and "/commit/<commit>"
-  let match = window.location.pathname.match(/\/commits\/([^/]+)/);
-  if (!match) {
-    match = window.location.pathname.match(/\/commit\/([^/]+)/);
-  }
-  return match ? match[1] : null;
-}
-=======
 // Keyboard navigation: Press "n" for next commit and "p" for previous commit.
 document.addEventListener("keydown", (event) => {
   // Avoid interfering when typing in input fields, textareas, selects, or contentEditable elements
@@ -258,7 +232,6 @@ document.addEventListener("keydown", (event) => {
 // ------------------------------
 // Save the original fetch so we can use it later.
 const originalFetch = window.fetch;
->>>>>>> d43050e (:sparkles: feat(merging): merge all)
 
 window.fetch = async function (input, init = {}) {
   // Determine request details, whether input is a string or a Request object.
@@ -279,17 +252,9 @@ window.fetch = async function (input, init = {}) {
     body = await clonedRequest.text();
   }
 
-<<<<<<< HEAD
-  try {
-    // 1. Get annotated references for the commit
-    const annotatedRefsUrl = `https://bitbucket.org/!api/internal/repositories/galerieslafayette/detaxe-mobile/changeset/${commitNumber}/annotated_refs`;
-    const annotatedRefsResponse = await fetch(annotatedRefsUrl);
-    const annotatedRefs = await annotatedRefsResponse.json();
-=======
   // Regex to match the commit comments endpoint
   const commitCommentsRegex =
     /^https:\/\/bitbucket\.org\/!api\/2\.0\/repositories\/${projectURL}\/commit\/([^/]+)\/comments\/$/;
->>>>>>> d43050e (:sparkles: feat(merging): merge all)
 
   if (method.toUpperCase() === "POST" && commitCommentsRegex.test(url)) {
     console.log("MATCHED COMMIT COMMENT POST");
@@ -304,18 +269,11 @@ window.fetch = async function (input, init = {}) {
       return originalFetch(input, init);
     }
 
-<<<<<<< HEAD
-    // 3. Build the query URL for fetching the pull request.
-    const query = `source.branch.name="${branchName}" AND source.repository.full_name="galerieslafayette/detaxe-mobile" AND destination.repository.full_name="galerieslafayette/detaxe-mobile" AND destination.branch.name="master"`;
-    const encodedQuery = encodeURIComponent(query);
-    const prUrl = `https://bitbucket.org/!api/2.0/repositories/galerieslafayette/detaxe-mobile/pullrequests/?fields=next,values.links,values.title,values.id,values.state,values.created_on,values.closed_on&q=${encodedQuery}`;
-=======
     // Build the new URL using the PR id.
     const newUrl = `https://bitbucket.org/!api/2.0/repositories/${projectURL}/pullrequests/${prId}/comments/`;
     console.log(
       `Intercepted POST to commit ${commitID} comments. Redirecting to PR ${prId} comments endpoint: ${newUrl}`
     );
->>>>>>> d43050e (:sparkles: feat(merging): merge all)
 
     // Forward the POST call with the same options, ensuring we include the body.
     // If input was a Request object, we create a new init object.
@@ -327,42 +285,6 @@ window.fetch = async function (input, init = {}) {
       ...init,
     };
 
-<<<<<<< HEAD
-    // Log the pull request id.
-    console.log("Pull Request ID:", prId);
-    return prId;
-  } catch (error) {
-    console.error("Error in getCurrentPRId:", error);
-  }
-}
-
-// Step 3
-
-async function getAdjacentCommits() {
-  const prId = await getCurrentPRId();
-  if (!prId) return null;
-  // https://bitbucket.org/!api/2.0/repositories/galerieslafayette/detaxe-mobile/pullrequests/270/commits
-  // fetch commits the commits
-  const commitsUrl = `https://bitbucket.org/!api/2.0/repositories/galerieslafayette/detaxe-mobile/pullrequests/${prId}/commits`;
-  const commitsResponse = await fetch(commitsUrl);
-  const commitsData = await commitsResponse.json();
-  const commitsHistory = commitsData.values;
-
-  const currentCommitNumber = getCommitNumber();
-
-  let previousCommit = null;
-  let nextCommit = null;
-  for (let i = 0; i < commitsHistory.length; i++) {
-    if (commitsHistory[i].hash === currentCommitNumber) {
-      if (i > 0) {
-        previousCommit = commitsHistory[i - 1].hash;
-      }
-      if (i < commitsHistory.length - 1) {
-        nextCommit = commitsHistory[i + 1].hash;
-      }
-      break;
-    }
-=======
     originalFetch(newUrl, newInit)
       .then((response) => {
         console.log(`Successfully posted to PR ${prId} comments endpoint.`);
@@ -372,7 +294,6 @@ async function getAdjacentCommits() {
         console.error("Error posting to PR comments endpoint:", error);
         throw error;
       });
->>>>>>> d43050e (:sparkles: feat(merging): merge all)
   }
 
   // For all other requests, use the original fetch.
