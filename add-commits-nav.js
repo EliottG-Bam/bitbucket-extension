@@ -122,6 +122,7 @@ const NAV_CONTAINER_ID = "bitbucket-booster-nav-container";
 navigation.addEventListener("navigate", () => {
   // setTimeout to wait for the page to be updated before checking the URL
   setTimeout(async () => {
+    cachedPRId = null;
     await updateNavBar();
   });
 });
@@ -234,65 +235,48 @@ document.addEventListener("keydown", (event) => {
 const originalFetch = window.fetch;
 
 window.fetch = async function (input, init = {}) {
-  // Determine request details, whether input is a string or a Request object.
-  let url, method, body, headers;
-  if (typeof input === "string") {
-    url = input;
-    method = init.method || "GET";
-    body = init.body;
-    headers = init.headers;
-  } else {
-    // If input is a Request object, clone it so we can safely extract its body.
-    url = input.url;
-    method = input.method;
-    headers = input.headers;
-    // IMPORTANT: Reading the body from a Request consumes its stream.
-    // We use clone() to avoid that, and then read the body as text.
-    const clonedRequest = input.clone();
-    body = await clonedRequest.text();
-  }
+  // normalize
+  const method = (init.method || input.method || "GET").toUpperCase();
+  const url = typeof input === "string" ? input : input.url;
 
-  // Regex to match the commit comments endpoint
-  const commitCommentsRegex =
-    /^https:\/\/bitbucket\.org\/!api\/2\.0\/repositories\/${projectURL}\/commit\/([^/]+)\/comments\/$/;
+  // match commit comments (flexible for plural, slash, query)
+  const commitCommentsRegex = new RegExp(
+    `^https://bitbucket\\.org/!api/2\\.0/repositories/${projectURL}` +
+      `/commit(?:s)?/([^/]+)/comments(?:/?(?:\\?.*)?)?$`
+  );
 
-  if (method.toUpperCase() === "POST" && commitCommentsRegex.test(url)) {
-    console.log("MATCHED COMMIT COMMENT POST");
-    const commitID = url.match(commitCommentsRegex)[1];
+  if (method === "POST" && commitCommentsRegex.test(url)) {
+    console.log("Matched commit comment POST:", url);
+    const [, commitID] = url.match(commitCommentsRegex);
 
-    // Retrieve the associated PR id.
     const prId = await getCachedPRId();
     if (!prId) {
-      console.error(
-        "PR ID not available; proceeding with the original request."
-      );
+      console.error("No PR ID cached; falling back.");
       return originalFetch(input, init);
     }
 
-    // Build the new URL using the PR id.
-    const newUrl = `https://bitbucket.org/!api/2.0/repositories/${projectURL}/pullrequests/${prId}/comments/`;
-    console.log(
-      `Intercepted POST to commit ${commitID} comments. Redirecting to PR ${prId} comments endpoint: ${newUrl}`
-    );
+    const newUrl =
+      `https://bitbucket.org/!api/2.0/repositories/${projectURL}` +
+      `/pullrequests/${prId}/comments`;
+    console.log(`Redirecting comment on ${commitID} → PR ${prId}`, newUrl);
 
-    // Forward the POST call with the same options, ensuring we include the body.
-    // If input was a Request object, we create a new init object.
-    const newInit = {
-      method: method,
-      headers: headers,
-      body: body,
-      // Include any other properties from init if needed.
-      ...init,
-    };
+    // rebuild init so we carry over body & headers
+    let body = init.body;
+    let headers = init.headers;
+    if (typeof input !== "string") {
+      headers = headers || input.headers;
+      body = body || (await input.clone().text());
+    }
 
-    originalFetch(newUrl, newInit)
+    const newInit = { ...init, method, headers, body };
+    return originalFetch(newUrl, newInit)
       .then((response) => {
-        console.log(`Successfully posted to PR ${prId} comments endpoint.`);
+        console.log(`Successfully posted to PR ${prId}.`);
         return response;
       })
-      .catch((error) => {
-        console.error("Error posting to PR comments endpoint:", error);
-        throw error;
+      .catch((err) => {
+        console.error("Error posting to PR comments:", err);
+        throw err;
       });
   }
 
